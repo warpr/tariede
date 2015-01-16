@@ -1,0 +1,14 @@
+
+sudo: false
+language:
+  - node_js
+node_js: "0.10"
+script: bin/test
+cache:
+  directories:
+  - node_modules
+
+notifications:
+  irc: "chat.freenode.net##senet"
+  email: false
+

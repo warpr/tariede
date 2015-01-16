@@ -1,0 +1,5 @@
+#!/bin/sh
+
+node_modules/.bin/bower install
+cd node_modules/when && npm run browserify
+
