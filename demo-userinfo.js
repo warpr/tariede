@@ -20,14 +20,9 @@ var XMLHttpRequest = XMLHttpRequest ? XMLHttpRequest : require ('xmlhttprequest'
         }
     };
 
-    var registerElement = function (name, options) {
-        var constructor = function () { this.tagName = name; };
-        constructor.prototype = Object.create (options.prototype);
-
-        return constructor;
-    };
-
     var proto = createElement ();
+
+    proto.customElementName = 'demo-userinfo';
 
     proto.load = function (callback) {
         var self = this;
@@ -58,12 +53,12 @@ var XMLHttpRequest = XMLHttpRequest ? XMLHttpRequest : require ('xmlhttprequest'
             '<button type="button">next</button></div>';
     };
 
-    proto.renderServerSide = function (node) {
+    proto.renderServerSide = function () {
         var deferred = when.defer();
         var self = this;
 
-        self.load.call (node, function (data) {
-            node.innerHTML = self.renderHtml (data);
+        self.load (function (data) {
+            self.innerHTML = self.renderHtml (data);
             deferred.resolve ();
         });
 
@@ -87,9 +82,9 @@ var XMLHttpRequest = XMLHttpRequest ? XMLHttpRequest : require ('xmlhttprequest'
     };
 
     if (typeof module === 'object') {
-        module.exports = registerElement ('demo-userinfo', { prototype: proto });
+        module.exports = proto;
     } else {
-        document.registerElement ('demo-userinfo', { prototype: proto });
+        document.registerElement (proto.customElementName, { prototype: proto });
     }
 
 })();
