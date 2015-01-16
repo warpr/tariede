@@ -6,6 +6,9 @@
  *   it under the terms of copyleft-next 0.3.0.  See LICENSE.txt.
  */
 
+var when = when ? when : require ('when');
+var XMLHttpRequest = XMLHttpRequest ? XMLHttpRequest : require ('xmlhttprequest').XMLHttpRequest;
+
 (function () {
     'use strict';
 
@@ -47,19 +50,31 @@
         this.refresh ();
     };
 
-    proto.serverSideString = function () {
-        return "WUT WUT KOEK &lt;b>KOEK</b> KOEK";
+    proto.renderHtml = function (data) {
+        return '<div style="border: 1px dashed #ccc; padding: 0.5em;">' +
+            'id: ' + data.id + '<br />' +
+            'username: <b>' + data.username + '</b><br />' +
+            'name: ' + data.name + '<br />' +
+            '<button type="button">next</button></div>';
+    };
+
+    proto.renderServerSide = function (node) {
+        var deferred = when.defer();
+        var self = this;
+
+        self.load.call (node, function (data) {
+            node.innerHTML = self.renderHtml (data);
+            deferred.resolve ();
+        });
+
+        return deferred.promise;
     };
 
     proto.refresh = function () {
         var self = this;
 
         self.load (function (data) {
-            self.innerHTML = '<div style="border: 1px dashed #ccc; padding: 0.5em;">' +
-                'id: ' + data.id + '<br />' +
-                'username: <b>' + data.username + '</b><br />' +
-                'name: ' + data.name + '<br />' +
-                '<button type="button">next</button></div>';
+            self.innerHTML = self.renderHtml (data);
 
             self.getElementsByTagName ('button')[0].addEventListener ('click', function (event) {
                 self.onNext (event);
